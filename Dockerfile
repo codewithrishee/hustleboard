@@ -1,3 +1,4 @@
+
 # Frontend build
 FROM node:22-alpine AS frontend
 
@@ -62,8 +63,15 @@ RUN printf '<Directory /var/www/html/public>\nAllowOverride All\nRequire all gra
     > /etc/apache2/conf-available/laravel.conf \
     && a2enconf laravel
 
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Create Laravel storage and session directories
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwX storage bootstrap/cache
 
 EXPOSE 80
 
