@@ -199,3 +199,42 @@ Route::middleware('auth')->group(function () {
 });
 
 
+
+
+Route::get('/debug-session', function () {
+    $path = storage_path('framework/sessions');
+    
+    // Try to write a session
+    session(['debug_test' => now()->toDateTimeString()]);
+    session()->save();
+    
+    // Check if directory exists and is writable
+    $dirExists = is_dir($path);
+    $dirWritable = is_writable($path);
+    
+    // Count files in session directory
+    $files = [];
+    if ($dirExists) {
+        $files = array_diff(scandir($path), ['.', '..']);
+    }
+    
+    return response()->json([
+        'session_id' => session()->getId(),
+        'session_driver' => config('session.driver'),
+        'session_files_path' => config('session.files'),
+        'storage_path' => $path,
+        'dir_exists' => $dirExists,
+        'dir_writable' => $dirWritable,
+        'session_files_count' => count($files),
+        'session_files_sample' => array_slice($files, 0, 5),
+        'cookie_config' => [
+            'name' => config('session.cookie'),
+            'secure' => config('session.secure'),
+            'same_site' => config('session.same_site'),
+            'domain' => config('session.domain'),
+            'path' => config('session.path'),
+        ],
+        'app_url' => config('app.url'),
+        'request_secure' => request()->secure(),
+    ]);
+});
