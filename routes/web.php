@@ -21,15 +21,24 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReportController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Guest Routes
 |--------------------------------------------------------------------------
-| Only users who are not logged in can access login.
 */
 
 Route::middleware('guest')->group(function () {
 
+    // One-time Registration
+    Route::get('/register', [AuthController::class, 'showRegister'])
+        ->name('register');
+
+    Route::post('/register', [AuthController::class, 'register'])
+        ->middleware('throttle:5,1')
+        ->name('register.submit');
+
+    // Login
     Route::get('/login', [AuthController::class, 'showLogin'])
         ->name('login');
 
@@ -38,6 +47,7 @@ Route::middleware('guest')->group(function () {
         ->name('login.submit');
 
 });
+
 
 
 /*
