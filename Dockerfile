@@ -65,7 +65,7 @@ RUN printf '<Directory /var/www/html/public>\nAllowOverride All\nRequire all gra
 
 # Create Laravel storage and session directories
 RUN mkdir -p \
-    storage/framework/cache \
+    storage/framework/cache/data \
     storage/framework/sessions \
     storage/framework/views \
     storage/logs \
